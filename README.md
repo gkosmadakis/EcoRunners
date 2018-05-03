@@ -5,6 +5,7 @@ It could be used for their employees to see when they have shift so weekly sched
 receive notifications before their shift, for support or in an Emrgency.
 
 Technologies:
+
 -Firebase Database for storing the users and their weekly schedule and for receiving notifications if their schedule changes
 
 -OneSignal for sending notifications from user to user
