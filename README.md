@@ -6,4 +6,5 @@ receive notifications before their shift, for support or in an Emrgency.
 
 Technologies:
 -Firebase Database for storing the users and their weekly schedule and for receiving notifications if their schedule changes
+
 -OneSignal for sending notifications from user to user
