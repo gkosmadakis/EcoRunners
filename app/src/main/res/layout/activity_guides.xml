@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="uk.co.ecorunners.ecorunners.GuidesActivity">
+
+
+    <ImageView
+        android:id="@+id/logoView"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        app:srcCompat="@drawable/ecorunnerslogo" />
+
+
+    <ImageView
+        android:id="@+id/contactdetailsImage"
+        android:layout_width="50dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/courierRatesImage"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="26dp"
+        app:srcCompat="@drawable/contact_details" />
+
+    <TextView
+        android:id="@+id/courierDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logoView"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="55dp"
+        android:layout_toEndOf="@+id/contactdetailsImage"
+        android:clickable="true"
+        android:onClick="onClick"
+        android:text="Couriers Contact Details"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/courierRatesImage"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/courierRates"
+        android:layout_alignEnd="@+id/spareBicycleRecordImage"
+        app:srcCompat="@drawable/courier_rates" />
+
+    <TextView
+        android:id="@+id/courierRates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/courierDetails"
+        android:layout_below="@+id/courierDetails"
+        android:layout_marginTop="49dp"
+        android:clickable="true"
+        android:onClick="onClick"
+        android:text="Couriers Rates"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/shopsGuidesImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/courierRates"
+        android:layout_marginTop="28dp"
+        app:srcCompat="@drawable/shops_guides" />
+
+    <TextView
+        android:id="@+id/shopsGuides"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/shopsGuidesImage"
+        android:layout_alignStart="@+id/courierRates"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:onClick="onClick"
+        android:text="Shops Guides"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/spareBicycleRecordImage"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_alignEnd="@+id/shopsGuidesImage"
+        android:layout_below="@+id/shopsGuidesImage"
+        android:layout_marginEnd="7dp"
+        android:layout_marginTop="26dp"
+        app:srcCompat="@drawable/spare_bicycle_record" />
+
+    <TextView
+        android:id="@+id/spareBicycleRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/spareBicycleRecordImage"
+        android:layout_alignStart="@+id/shopsGuides"
+        android:clickable="true"
+        android:onClick="onClick"
+        android:text="Spare Bicycle Record"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/homeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Home"
+        android:background="@drawable/btn_home_background"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>

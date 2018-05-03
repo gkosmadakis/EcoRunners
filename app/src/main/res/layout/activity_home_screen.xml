@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeViewID"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="uk.co.ecorunners.ecorunners.MainActivity">
+
+    <ImageView
+        android:id="@+id/logoView"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        app:srcCompat="@drawable/ecorunnerslogo" />
+
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/logoView"
+        android:layout_toRightOf="@+id/logoView"
+        android:text="Welcome"
+        tools:layout_editor_absoluteX="150dp"
+        tools:layout_editor_absoluteY="143dp" />
+
+    <Button
+        android:id="@+id/rotaCalendarBtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/welcomeText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/btn_home_background"
+        android:text="Rota Calendar" />
+
+    <Button
+        android:id="@+id/guidesBtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/rotaCalendarBtn"
+        android:layout_alignStart="@+id/rotaCalendarBtn"
+        android:layout_below="@+id/rotaCalendarBtn"
+        android:layout_marginTop="43dp"
+        android:background="@drawable/btn_home_background"
+        android:text="Guides" />
+
+    <Button
+        android:id="@+id/managementRotaBtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/guidesBtn"
+        android:layout_centerVertical="true"
+        android:background="@drawable/btn_home_background"
+        android:text="Management Rota" />
+
+    <Button
+        android:id="@+id/managementChatBtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/managementRotaBtn"
+        android:layout_alignRight="@+id/managementRotaBtn"
+        android:layout_below="@+id/managementRotaBtn"
+        android:layout_marginTop="41dp"
+        android:background="@drawable/btn_home_background"
+        android:text="Management Chat" />
+
+    <Button
+        android:id="@+id/emergencyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Emergency"
+        android:background="@drawable/btn_emergency_background"/>
+
+    <Button
+        android:id="@+id/supportBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/emergencyBtn"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="7dp"
+        android:layout_marginRight="7dp"
+        android:text="Support"
+        android:background="@drawable/btn_support_background"/>
+
+
+</RelativeLayout>

@@ -1,0 +1,197 @@
+<resources>
+    <string name="app_name">EcoRunners</string>
+    <string name="action_settings">Settings</string>
+    <string name="logout">Logout</string>
+
+    <string name="couriersRates">
+            <font size="20"><b>Payment Rates and Info </b></font> "\n\n"
+           <font size="18"><b>Rates of pay per shop: </b> </font> "\n\n"
+        <font size="16"><b>• Taco Mazama: </b>£4.00 an hour and £1.50 per delivery "\n\n"
+        <b>• On Call Shift: </b>15% for orders >£20 and £3 for order less than £20 "\n\n"
+        <b>• Ashoka Ashton Lane: </b>£4.00 an hour and £1 per delivery "\n\n"
+        <b>• Pickled Ginger: </b>£5.00 an hour and £1 per delivery "\n\n"
+        <b>• Byblos: </b>£4.00 per hour £1 per delivery "\n\n"
+        <b>• Station Wok: </b>£4.00 an hour and £1 per delivery "\n\n"
+        <b>• Chicken Place (G1 and G12): </b>£4.00 an hour and £1 per delivery "\n\n"
+        <b>• Rumours: </b>£4.50 per hour and £1 per delivery "\n\n"
+        <b>• Masala Twist (Byres and Hope Str): </b>£4.50 an hour and £1 per delivery "\n\n"
+        <b>• Mamafubu: </b>£5.00 per hour, £1 per delivery "\n\n"
+        <b>• Cafe India: </b>£4.00 per hour and £1.00 per delivery "\n\n"
+        <b>• Subway: </b>£5.00 per hour, £1.00 per delivery "\n\n"
+        <b>• Ushas: </b>£5.00 per hour, £1.oo per delivery (to be confirmed) </font>
+    </string>
+
+    <string name="spareBicycleRecord"><font size="20"><b><u>Spare Bikes Log and Info</u></b></font> "\n\n"
+    <font size="18"><b><u>Rules: </u></b></font> "\n\n"
+
+    <b>1. <u>ALWAYS</u> update the log when you borrow and return a bike "\n"
+    2. Return the bike in the same state that it was when you took it "\n"
+    3. <u>ALWAYS</u> inform a team-leader when you need/take a spare"\n"
+    4. <u>DON’T</u> keep any bike for more than 3 days ( BUT special circumstances will be considered) </b>
+        More details at the end of the document."\n\n"
+
+        <font size="18"><b><u> Spares: </u></b></font> "\n\n"
+
+    <b> 1. Red Roadbike (multispeed) </b> "\n\n"
+    • Currently used by: AVAILABLE "\n"
+    • Location: Taco Mazama Byres road, rear cupboard (through the toilet room) "\n"
+    • Details: S-M frame; thin tyres; flat handlebars; good condition except weak brakes "\n\n"
+    <b> 2. Blue Singlespeed </b> "\n\n"
+    • Currently used by: Falah Hamza "\n"
+    • Location: Chicken Place G12, downstairs "\n"
+    • Details: L frame, medium tyres, flat handlebars, good condition - fairly sluggish "\n\n"
+
+    <b> 3. Black Raleigh Singlespeed </b> "\n\n"
+    • Currently used by: Nikos Iplik "\n"
+    • Location: n/a "\n"
+    • Details: L frame, thin-medium tyres, flat handlebars, good condition (tight brakes) "\n\n"
+
+    <b>4. Silver GT Mountainbike (multispeed) </b> "\n\n"
+    • Currently used by: AVAILABLE "\n"
+    • Location: Mamafubu, downstairs "\n"
+    • Details: M frame, thick tyres, flat handlebars, rear mudguards, good condition (back brake handle needs to be fixed) "\n\n"
+
+    <font size="18"><b><u> Relevant info: </u></b></font>  "\n\n"
+    <b>• Update the log by writing your name in the ‘currently used by’ section when you borrow a bike, and deleting that and
+        writing ‘AVAILABLE’ instead when returning a bike. This document can only be edited from a desktop, not from mobile
+        version of facebook </b> "\n"
+    <b> • The ‘Location’ section specifies where the bike normally resides, that is if it is not being used by someone
+        (in which case it would be with that person, and not at the specified location, of course) </b> "\n"
+    <b>• You can use these bikes for free as long as you don’t break them; any damage you do you have to repair yourself
+        (wear and tear set aside; eg. you won’t have to fix it if the chain snaps BUT you will have to if you get a puncture)</b> "\n"
+    <b>• This is meant for emergency situations, eg. if your own bike breaks during a shift or if it breaks before a shift and you
+        don’t have the time/means to repair it. <u>SPARES ARE NOT to act as a permanent/long-term substitute</u> for your bike, hence the
+        3 days return limit (but do inform your teamleader if you can’t get your own bike fixed in 3 days due to
+        objective reasons - exceptions will be granted) </b> "\n"
+    <b>• If you need a spare quickly during your shift you can go get an avaialable spare from one of the locations
+        - we highly appreciate couriers having initiative and solving problems independtly - BUT do send a quick text to your
+        team leader (eg.: ‘derailleur problem. Getting the blue spare’), so we know what is going on </b> "\n"
+    <b>• When picking up a spare from one of the shops please be respectful to the staff; always
+        introduce yourself and ask for permission (and instructions) to pick up the spare bike
+        (eg.: ‘Hi, I’m an Ecorunners courier, I’d like to pick up the spare you have in the shop, could you please show me...’) </b>"\n"
+        <b>   For any questions, suggestions or feedback, message me (Casian). </b>
+
+    </string>
+
+    <string name="shopsGuides"><font size="20"><b><u> Ashoka info </u></b></font> "\n\n\n"
+    <font size="18"><b> 1) Basics </b> </font> "\n\n"
+    · Be on time; "\n"
+    · Don’t go in through the main door; use the side (emergency exit..) door;"\n"
+    · Avoid entering the restaurant area; if you have reason to do so, please let the staff know of your intention."\n\n"
+    <font size="18"><b> 2) Doing deliveries </b> </font> "\n\n"
+    · Keep an eye on the area where they post deliveries"\n"
+    · If it’s your delivery to take check where it is in advance"\n"
+    · When is it “your delivery to take”? When you are the only courier in the shop, or when you were in the shop before
+        the other courier/driver. Rule: first in, first out"\n"
+    · Always write the details of the delivery you’re doing (delivery id, postcode, customer number, your name, time you left with
+        it time you came back) in the notebook provided"\n"
+    <b>· Keep all the delivery slips for cash up at the end of your shift </b> "\n"
+    · If the driver (Jim) is working with you, you should leave <b>(whenever possible)</b> all G13s and G14s for <b>him</b> to take"\n"
+    • It’s not possible to leave the G13s and G14s to the driver if the driver just left and would take a long time to come back
+        or if the delivery is running late (check acceptance time on slip) "\n"
+    · If you have to do a delivery that’s more than 3 miles of cycling away, you’ll get paid £2 instead of £1; when this happens
+        write “&lt;3 m” in the notebook next to the postcode. When posting your number of deliveries and hours in Ashoka at the end
+        of the week make sure you tell us how many deliveries were >3 miles and how many were normal "\n"
+    · Check if delivery is paid; if unpaid make sure you have change accordingly "\n"
+    · If you don’t have change you can ask the restaurant for a ‘float’ (usually £5) - but try to bring your own "\n"
+    · Keep all the cash you receive from customers during your shift - you’ll give it back to the restaurant at the end of your shift,
+        when you cash up "\n"
+    · Speed: you should aim at delivering within 20 minutes of when you picked the delivery up "\n"
+    · You may take multiple deliveries at once if it makes sense to do so (check the addresses!) "\n\n"
+    <font size="18"><b> 3) Other stuff  </b> </font> "\n\n"
+    · Anything problematic that happens to you or your bike during your shift, any problems that you don’t know how to solve:
+        <b>contact your teamleader/write on the ecorunners chat, contact Manos or Elina.</b> You are not alone!"\n"
+    · Order your food at least 20 minutes before your shift ends so you don’t have to wait "\n"
+    · If you happen to lose one of your slips you can replace it with the kitchen copy - ask some of the staff
+        (but they don’t like this happening) "\n"
+    · If the restaurant is quiet, you can go (try to) cash up 15 minutes before the official end of your shift "\n\n"
+    <font size="18"><b> 4) Background info </b> </font> "\n\n"
+    · You can see three types of delivery slips in Ashoka: JustEat, phone restuarant order slip and website restaurant order slip.
+        Each of them can be either paid or unpaid. The paid phone ones will have a card receipt stapled to their back so check for
+        that. Restaurant website ones are very rare."\n"
+    · During the weekdays there are 2 couriers working in Ashoka. During the weekends there are two couriers + a driver "\n"
+    · Jim is the driver. He’s quite friendly and sassy. His number is 07880717402 - you can use this to check when he’s coming back,
+        so you know if you must take the G13/G14 yourself or not "\n"
+    · G13s and G14 are generally quite far away (at least 2 miles, up to 4), and this is why it’s more efficient for the car
+        to take them. G20s can ocassionally be nasty as well, but they are usually as good as the other nice postcodes: G11s and G12s "\n"
+    · Chetan (guy with an earpiece and suit) is the restaurant manager. Try not to cross him, he’s not always fun "\n"
+    · Rates are: £4/hour and £1 or £2/ delivery (£2 if it’s over 3 miles) "\n\n"
+    <font size="18"><b> · DO’s </b> </font> "\n\n"
+    <b>• - Communicate with your team leader, Manos, Elina, other couriers </b>"\n"
+    <b>• - Ask us questions when you’re unsure about something </b>"\n"
+    <b>• - Be polite </b>"\n"
+    <b>• - Try to be nice with the people you deliver food to </b>"\n"
+    <b>• - Be proud to represent EcoRunners </b>"\n"
+    <b>• - Assume responsibility and make your own decisions when appropriate </b>"\n"
+    <b>• - Stay calm when the restaurant get crazy busy with deiveries. If it’s undoable, then it’s not your responsibility to do
+        it (i.e. you’re the only courier and 4 deliveries come at once) </b>"\n"
+    <b>• -Ride safe!! </b> "\n\n"
+
+    <font size="18"><b>· DON’T’s </b> </font> "\n\n"
+    <b>• · randomly walk in the customer area  </b>"\n"
+    <b>• · stay in the way of waiters or any Ashoka staff  </b>"\n"
+    <b>• · leave the restaurant/your shift without permission  </b>"\n"
+    <b>• · be late for the start of your shift </b>"\n"
+    <b>• · ride at night time without lights  </b>"\n"
+    <b>• · get into an argument with any of the Ashoka stuff – any problems, you let us know  </b>"\n"
+    <b>• · lose delivery slips  </b>"\n"
+        "\n\n"
+
+
+      <font size="20"><b>  Pickled Ginger Info </b> </font> "\n\n"
+    1. For pickled ginger you are going to work for multiple shops. Namely la rotunda, yen, diner (all in the same building next
+        to hydro), pickled ginger (st vincent st), athena (elderslie street), central sushi (renfield street) "\n"
+    2. You are going to need a fully charged smart phone with internet data and also carry a charger or a power bank with you.
+        Every shop has wifi, ask the guys to give you the password. B,ut you are going to need data so you can keep an eye on the
+        feed when you are not in a shop "\n"
+    3. If you have not worked there before, get to PG a bit earlier so they can explain you how they work. You are going to be added
+        in a Whats App feed. All info for deliveries are coming through that feed. You are going to be specifically allocated to a
+        delivery from the controller (Example: John on bike pick up PG G2) "\n"
+    4. When you start your shift post something like " John from Ecorunners starting my shift" so the controller can know "\n"
+    5. When you pick up the delivery you mention the shop, the post code and the word "away" (eg PG G2 away)-make note that for
+        deliveries from yen you also need to write your name on the slips that stay in the shop "\n"
+    6. When you drop the delivery you post clear (eg PG G2 clear) "\n"
+    7. 30 minutes before you finish your shift post that you got 30 minutes left. They either going to give you a last close
+        by delivery or tell you to cash up. Ask for food ahead of schedule as well to make sure is going to be ready. Usually the
+        controller sends orders for staff in a feed "\n"
+    8. You keep all the slips with you till the end of the shift. You cash up in PG. if they tell you to go back to every shop to
+        drop the slips you DO NOT. The only reason for going to another shop for cashing up is in the case that you had an unpaid
+        delivery and you have to get the money back to the shop "\n"
+    9. Usually PG wont give you a cash float so make sure you have your own money, in the rare case of unpaid deliveries. If you have
+        no money on you you can ask nicely either in rotunda or PG for cash float, they wont say no "\n"
+    10. If they try to pay you the delivery fees you let them know that you are getting paid by Ecorunners so you DO NOT get any
+        money for the deliveries from them "\n"
+    11. All the bags are kept in rotunda please go by rotunda before you start your shift. In the end of the shift make sure all
+        the bags are back in rotunda and ask the guys to lock them in the back cupboard. BAGS SHOULD ALWAYS STAY LOCKED NO BAGS
+        SHOULD BE LEFT SOMEWHERE ELSE "\n"
+    12. Useful language for the feed PG=pickled ginger, LARO= la rotunda, CS= central sushi, away=delivery picked up, clear=delivery
+        dropped"\n"
+        "\n\n"
+
+
+      <font size="20"><b>  Taco Mazama Info </b> </font> "\n\n"
+
+   <b> Evening Shift/Weekend Shift: </b>"\n"
+        • ensure that there is a red or blue bag insulated to do deliveries with upon arrival at the start of your shift."\n"
+        • stay out the way of customers and conduct yourself in a professional manner while in the shop"\n"
+        • ensure the blue or red insulated bag is returned to Taco Mazama at the end of your shift, do not take the bag with you
+        at the end of the shift"\n"
+
+   <b> Weekday Morning Shift:</b> "\n"
+        • pick up the Westend or Central phone at the start of your shift, test it is working and fully charged"\n"
+        • go about your daily business and if the you are called go do a delivery for Taco Mazama"\n"
+        • once the shift has finished, return the phone to Taco Mazama"\n"
+
+    </string>
+
+
+    <string name="declarationRegister"> I am aware and accept that this position is a self-
+                                        employed position. For more information about the self
+                                        employment please visit the website of the government.
+                                        The personal sensitive information that you have provided
+                                        are for internal use only and securely protected by our
+                                        database.
+        </string>>
+
+
+</resources>

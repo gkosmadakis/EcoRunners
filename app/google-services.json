@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "761151017537",
+    "firebase_url": "https://ecorunners-ac0f1.firebaseio.com",
+    "project_id": "ecorunners-ac0f1",
+    "storage_bucket": "ecorunners-ac0f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761151017537:android:cfa085ee0229016c",
+        "android_client_info": {
+          "package_name": "uk.co.ecorunners.ecorunners"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761151017537-sgrbc48fsv19vjpcsq40b9cgkseu0t0f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uk.co.ecorunners.ecorunners",
+            "certificate_hash": "0284c7a343eab3e181eb4ab28c8036806cbefe29"
+          }
+        },
+        {
+          "client_id": "761151017537-u4h6irngdt3gado7u4a2rki94f35istl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5U1LACPsiAKrdv4ehs47uLo3mcBACUaE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761151017537-u4h6irngdt3gado7u4a2rki94f35istl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
