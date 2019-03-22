@@ -1,4 +1,4 @@
-package uk.co.ecorunners.ecorunners;
+package uk.co.ecorunners.ecorunners.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,21 +22,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static uk.co.ecorunners.ecorunners.Constants.FIRST_COLUMN;
-import static uk.co.ecorunners.ecorunners.Constants.SECOND_COLUMN;
-import static uk.co.ecorunners.ecorunners.Constants.THIRD_COLUMN;
+import uk.co.ecorunners.ecorunners.R;
+
+import static uk.co.ecorunners.ecorunners.utils.Constants.COUNTER_IS;
+import static uk.co.ecorunners.ecorunners.utils.Constants.FIRST_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.ROTA;
+import static uk.co.ecorunners.ecorunners.utils.Constants.SECOND_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.THIRD_COLUMN;
 
 public class AddDeliveriesActivity extends AppCompatActivity {
 
     TextView dayAndTime;
     EditText numberOfDeliveries;
-    Button nextShiftBtn, submitBtn, homeBtn;
-    private String dayStored,placeStored,timeStored, firstDayOfTheWeek, lastDayOfTheWeek, uid, mondayDelivery, tuesdayDelivery,
-            wednesdayDelivery,thursdayDelivery,fridayDelivery, saturdayDelivery, sundayDelivery;
-    Map<String, String> map,map2,map3,map4,map5,map6,map7;
+    Button nextShiftBtn;
+    Button submitBtn;
+    Button homeBtn;
+    private String mondayDelivery;
+    private String tuesdayDelivery;
+    private String wednesdayDelivery;
+    private String thursdayDelivery;
+    private String fridayDelivery;
+    private String saturdayDelivery;
+    private String sundayDelivery;
+    Map<String, String> map;
+    Map<String, String> map2;
+    Map<String, String> map3;
+    Map<String, String> map4;
+    Map<String, String> map5;
+    Map<String, String> map6;
+    Map<String, String> map7;
     private int stringListCounter = 0;
-    List<Map<String, String>> listOfMaps = new ArrayList<Map<String, String>>();
-    DatabaseReference url,ref;
+    List<Map<String, String>> listOfMaps = new ArrayList<>();
+    DatabaseReference url;
+    DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,25 +63,25 @@ public class AddDeliveriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_deliveries);
 
         SharedPreferences sharedPrefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        uid = sharedPrefs.getString("userID","");
+        String uid = sharedPrefs.getString("userID", "");
 
-        //retrieve the data Day, place time and firstDay-lastDay of the week from ListCalendar Activity
+        //retrieve the data Day, place time and firstDay-lastDay of the week from ListCalendarActivity Activity
         Bundle bundle = getIntent().getExtras();
 
-        dayStored = bundle.getString("day");
+        String dayStored = bundle.getString("day");
 
-        placeStored =  bundle.getString("place");
+        String placeStored = bundle.getString("place");
 
-        timeStored = bundle.getString("time");
+        String timeStored = bundle.getString("time");
 
-        firstDayOfTheWeek = bundle.getString("firstDayOfTheWeek");
+        String firstDayOfTheWeek = bundle.getString("firstDayOfTheWeek");
 
-        lastDayOfTheWeek = bundle.getString("lastDayOfTheWeek");
+        String lastDayOfTheWeek = bundle.getString("lastDayOfTheWeek");
 
         url = FirebaseDatabase.getInstance().getReference();
 
-        ref = url.child("Rota").child(uid)
-                .child("Week:"+firstDayOfTheWeek +" until "+lastDayOfTheWeek);
+        ref = url.child(ROTA).child(uid)
+                .child("Week:"+ firstDayOfTheWeek +" until "+ lastDayOfTheWeek);
 
         dayAndTime = (TextView) findViewById(R.id.DayAndTimeID);
 
@@ -85,7 +103,7 @@ public class AddDeliveriesActivity extends AppCompatActivity {
 
         dayAndTime.setText(displayString);
 
-        //retrieve all the maps from the ListCalendar Activity
+        //retrieve all the maps from the ListCalendarActivity Activity
         map = (HashMap<String, String>)bundle.getSerializable("map");
         map2 = (HashMap<String, String>)bundle.getSerializable("map2");
         map3 = (HashMap<String, String>)bundle.getSerializable("map3");
@@ -113,16 +131,12 @@ public class AddDeliveriesActivity extends AppCompatActivity {
         nextShiftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int id = v.getId();
 
                 if(stringListCounter < listOfMaps.size() - 1) {
 
                     stringListCounter++;
                 }
 
-                /*else if ( stringListCounter > 0) {
-                    stringListCounter--;
-                }*/
                 Map tempMap = listOfMaps.get(stringListCounter);
 
                 SpannableStringBuilder displayString = new SpannableStringBuilder
@@ -141,42 +155,42 @@ public class AddDeliveriesActivity extends AppCompatActivity {
                    case 1:
                        mondayDelivery = numberOfDeliveries.getText().toString();
                        addDeliveriesToDB(map);
-                       Log.i("Counter is: "+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
+                       Log.i(COUNTER_IS+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
                        numberOfDeliveries.setText("");
                        break;
 
                    case 2:
                        tuesdayDelivery = numberOfDeliveries.getText().toString();
                        addDeliveriesToDB(map2);
-                       Log.i("Counter is: "+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
+                       Log.i(COUNTER_IS+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
                        numberOfDeliveries.setText("");
                        break;
 
                    case 3:
                        wednesdayDelivery = numberOfDeliveries.getText().toString();
                        addDeliveriesToDB(map3);
-                       Log.i("Counter is: "+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
+                       Log.i(COUNTER_IS+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
                        numberOfDeliveries.setText("");
                        break;
 
                    case 4:
                        thursdayDelivery = numberOfDeliveries.getText().toString();
                        addDeliveriesToDB(map4);
-                       Log.i("Counter is: "+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
+                       Log.i(COUNTER_IS+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
                        numberOfDeliveries.setText("");
                        break;
 
                    case 5:
                        fridayDelivery = numberOfDeliveries.getText().toString();
                        addDeliveriesToDB(map5);
-                       Log.i("Counter is: "+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
+                       Log.i(COUNTER_IS+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
                        numberOfDeliveries.setText("");
                        break;
 
                    case 6:
                        saturdayDelivery = numberOfDeliveries.getText().toString();
                        addDeliveriesToDB(map6);
-                       Log.i("Counter is: "+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
+                       Log.i(COUNTER_IS+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
                        submitBtn.setVisibility(View.VISIBLE);
                        numberOfDeliveries.setText("");
                        break;
@@ -184,11 +198,14 @@ public class AddDeliveriesActivity extends AppCompatActivity {
                     case 7:
                         sundayDelivery = numberOfDeliveries.getText().toString();
                         addDeliveriesToDB(map7);
-                        Log.i("Counter is: "+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
+                        Log.i(COUNTER_IS+ stringListCounter+" "+dayAndTime.getText().toString(), numberOfDeliveries.getText().toString());
                         submitBtn.setVisibility(View.VISIBLE);
                         numberOfDeliveries.setText("");
                         break;
 
+                        default:
+                        Log.i("nextShiftBtn listener ", String.valueOf(stringListCounter));
+                            break;
                }
             }
         });
@@ -205,7 +222,7 @@ public class AddDeliveriesActivity extends AppCompatActivity {
                     addDeliveriesToDB(map7);
 
                     //add code to check if they have added all the deliveries
-                    Intent intent = new Intent(AddDeliveriesActivity.this, ListCalendar.class);
+                    Intent intent = new Intent(AddDeliveriesActivity.this, ListCalendarActivity.class);
 
                     intent.putExtra("mondayDeliveries", mondayDelivery);
                     intent.putExtra("tuesdayDeliveries", tuesdayDelivery);
@@ -238,7 +255,7 @@ public class AddDeliveriesActivity extends AppCompatActivity {
 
         DatabaseReference dayRef = ref.child(mapData.get(FIRST_COLUMN));
 
-        Map<String, Object> userData = new HashMap<String, Object>();
+        Map<String, Object> userData = new HashMap<>();
 
         if(!numberOfDeliveries.getText().toString().equals("") && !mapData.get(THIRD_COLUMN).equals("OFF")) {
 

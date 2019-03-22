@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/blue"
     android:padding="20dp"
-    tools:context="uk.co.ecorunners.ecorunners.LoginActivity">
+    android:id="@+id/loginactivitylayout"
+    tools:context="uk.co.ecorunners.ecorunners.activity.LoginActivity">
 
 
     <ImageView

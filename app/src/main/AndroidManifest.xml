@@ -30,24 +30,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity">
+        <activity android:name=".activity.LoginActivity">
         </activity>
 
-        <activity android:name=".MainActivity" />
-        <activity android:name=".ListCalendar">
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.ListCalendarActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
-        <activity android:name=".NextWeekActivity">
+        <activity android:name=".activity.AddDeliveriesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ListCalendar" />
-        </activity>
-        <activity android:name=".AddDeliveriesActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ListCalendar" />
+                android:value=".activity.ListCalendarActivity" />
         </activity>
 
         <receiver android:name=".AlarmReceiver">
@@ -58,31 +53,31 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".GuidesActivity" >
+        <activity android:name=".activity.RegisterActivity" />
+        <activity android:name=".activity.GuidesActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
-        <activity android:name=".CouriersContactDetailsActivity">
+        <activity android:name=".activity.CouriersContactDetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GuidesActivity" />
+                android:value=".activity.GuidesActivity" />
         </activity>
-        <activity android:name=".CouriersRatesActivity">
+        <activity android:name=".activity.CouriersRatesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GuidesActivity" />
+                android:value=".activity.GuidesActivity" />
         </activity>
-        <activity android:name=".ShopsGuidesActivity">
+        <activity android:name=".activity.ShopsGuidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GuidesActivity" />
+                android:value=".activity.GuidesActivity" />
         </activity>
-        <activity android:name=".SpareBicycleRecordActivity">
+        <activity android:name=".activity.SpareBicycleRecordActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GuidesActivity" />
+                android:value=".activity.GuidesActivity" />
         </activity>
 
     </application>

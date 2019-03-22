@@ -191,7 +191,9 @@
                                         The personal sensitive information that you have provided
                                         are for internal use only and securely protected by our
                                         database.
-        </string>>
+        </string>
+    <string name="channel_name">\"channel_name\"</string>
+    <string name="channel_description">\"channel_desc\"</string>>
 
 
 </resources>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="uk.co.ecorunners.ecorunners.AddDeliveriesActivity">
+    tools:context="uk.co.ecorunners.ecorunners.activity.AddDeliveriesActivity">
 
     <Button
         android:id="@+id/nextShiftBtn"

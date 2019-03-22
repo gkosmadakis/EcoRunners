@@ -1,13 +1,6 @@
-package uk.co.ecorunners.ecorunners;
+package uk.co.ecorunners.ecorunners.activity;
 
-import static uk.co.ecorunners.ecorunners.Constants.FIRST_COLUMN;
-import static uk.co.ecorunners.ecorunners.Constants.FOURTH_COLUMN;
-import static uk.co.ecorunners.ecorunners.Constants.SECOND_COLUMN;
-import static uk.co.ecorunners.ecorunners.Constants.THIRD_COLUMN;
-
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -29,40 +23,68 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ListCalendar extends AppCompatActivity {
+import uk.co.ecorunners.ecorunners.R;
+import uk.co.ecorunners.ecorunners.utils.ListViewAdapter;
+import uk.co.ecorunners.ecorunners.utils.RowItem;
+import uk.co.ecorunners.ecorunners.utils.Utils;
+
+import static uk.co.ecorunners.ecorunners.utils.Constants.DATE_FORMAT;
+import static uk.co.ecorunners.ecorunners.utils.Constants.FIRST_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.FOURTH_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.FRIDAY;
+import static uk.co.ecorunners.ecorunners.utils.Constants.ITEM_POSITION;
+import static uk.co.ecorunners.ecorunners.utils.Constants.MONDAY;
+import static uk.co.ecorunners.ecorunners.utils.Constants.PLACE;
+import static uk.co.ecorunners.ecorunners.utils.Constants.ROTA;
+import static uk.co.ecorunners.ecorunners.utils.Constants.SATURDAY;
+import static uk.co.ecorunners.ecorunners.utils.Constants.SECOND_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.SUNDAY;
+import static uk.co.ecorunners.ecorunners.utils.Constants.THIRD_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.THURSDAY;
+import static uk.co.ecorunners.ecorunners.utils.Constants.TUESDAY;
+import static uk.co.ecorunners.ecorunners.utils.Constants.UNTIL;
+import static uk.co.ecorunners.ecorunners.utils.Constants.WEDNESDAY;
+import static uk.co.ecorunners.ecorunners.utils.Constants.WEEK;
+
+public class ListCalendarActivity extends AppCompatActivity {
 
     ListView listView ;
     DatabaseReference url;
-    private String uid, placeStoredMon,placeStoredTue,placeStoredWed,placeStoredThu,placeStoredFri,placeStoredSat,
-            placeStoredSun,timeStoredMon,timeStoredTue,timeStoredWed,timeStoredThu,timeStoredFri,timeStoredSat,timeStoredSun,
-    firstDayOfTheWeek, lastDayOfTheWeek,mondayDelivery, tuesdayDelivery,wednesdayDelivery,thursdayDelivery,fridayDelivery,
-             saturdayDelivery, sundayDelivery;
+    private String uid;
+    private String firstDayOfTheWeek;
+    private String lastDayOfTheWeek;
     private ListViewAdapter adapter;
-    private ArrayList<HashMap<String, String>> list;
-    HashMap<String,String> map, map2, map3, map4, map5, map6, map7;
-    private TextView weekView,datesView;
-    private Button homeBtn, nextWeekBtn,previousWeekBtn;
+    HashMap<String,String> map;
+    HashMap<String,String> map2;
+    HashMap<String,String> map3;
+    HashMap<String,String> map4;
+    HashMap<String,String> map5;
+    HashMap<String,String> map6;
+    HashMap<String,String> map7;
+    private TextView datesView;
+    private Button previousWeekBtn;
     Calendar calendar;
-    public static boolean scheduleIsCleared = false;
+    private boolean scheduleIsCleared = false;
     // icons for the tick red x and pending icons
-    public static final Integer tickIcon =  R.drawable.ic_check_circle_green_24dp_withoutbackground;
-    public static final Integer xIcon = R.drawable.ic_highlight_off_red_24dp_without_background;
-    public static final Integer pendingIcon = R.drawable.ic_indeterminate_check_box_orange_24dp;
+    public static final Integer TICK_ICON =  R.drawable.ic_check_circle_green_24dp_withoutbackground;
+    public static final Integer X_ICON = R.drawable.ic_highlight_off_red_24dp_without_background;
+    public static final Integer PENDING_ICON = R.drawable.ic_indeterminate_check_box_orange_24dp;
     List<RowItem> rowItems;
-    public static ArrayList<Map> daysCourierIsOFF = new ArrayList<Map>();
-    public static ArrayList<Map> daysCourierIsON = new ArrayList<Map>();
-    public final String ACTION_ONE = "1";
-    public final String ACTION_TWO = "2";
-    public boolean courierHasNotAddedDeliveriesOnAtLeastOneDay;
+    protected static List<Map> daysCourierIsOFF = new ArrayList<>();
+    protected static List<Map> daysCourierIsON = new ArrayList<>();
+    public static final String ACTION_ONE = "1";
+    public static final String ACTION_TWO = "2";
+    private boolean courierHasNotAddedDeliveriesOnAtLeastOneDay;
+    private Utils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +92,16 @@ public class ListCalendar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_calendar);
 
+        utils = new Utils();
+
         // Get ListView object from xml
         listView = (ListView) findViewById(R.id.list);
 
-        //uid = bundle.getString("userID");
         SharedPreferences sharedPrefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         uid = sharedPrefs.getString("userID","");
 
         //Week View
-        weekView = (TextView) findViewById(R.id.weekView);
+        TextView weekView = (TextView) findViewById(R.id.weekView);
 
         //The dates view
         datesView = (TextView) findViewById(R.id.datesView);
@@ -86,7 +109,7 @@ public class ListCalendar extends AppCompatActivity {
         //get the first day of the week and the last
         calendar = Calendar.getInstance(Locale.US);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
 
         //the case when the current day is Sunday I need to show the current week MON-SUN
         int day = calendar.get(Calendar.DAY_OF_WEEK);
@@ -108,7 +131,6 @@ public class ListCalendar extends AppCompatActivity {
             firstDayOfTheWeek = simpleDateFormat.format(calendar.getTime());
 
             //here i get the first day of the week which is Sunday but is the Sunday of the previous week
-            //calendar.set(Calendar.DAY_OF_WEEK, 1);
             //and i add 6 days to get the Sunday of the current week
             calendar.add(Calendar.DATE, 6);
 
@@ -118,7 +140,7 @@ public class ListCalendar extends AppCompatActivity {
             weekView.setText("Week");
         }
 
-        datesView.setText(firstDayOfTheWeek+" until "+lastDayOfTheWeek);
+        datesView.setText(firstDayOfTheWeek+UNTIL+lastDayOfTheWeek);
 
         //check if the app has connection to Firebase namely if the device is connected to Internet
         DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
@@ -131,11 +153,11 @@ public class ListCalendar extends AppCompatActivity {
 
                 if (connected) {
 
-                    System.out.println("connected");
+                    Log.i("LstClndrActv connectedL","connected");
 
                 } else {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ListCalendar.this, AlertDialog.THEME_HOLO_LIGHT)
+                    AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ListCalendarActivity.this, android.R.style.Theme_Holo_Light_Dialog))
                             .setTitle("No internet connection")
                             .setMessage("The app is not connected to Firebase, check your internet connection");
 
@@ -149,7 +171,7 @@ public class ListCalendar extends AppCompatActivity {
                             });
 
                     alert1 = builder.create();
-
+                    Log.i("LstClndrActv connectedL",String.valueOf(connected));
                     alert1.show();
                 }
             }
@@ -157,43 +179,43 @@ public class ListCalendar extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
 
-                System.err.println("Listener was cancelled");
+                Log.e("ListCalendarActivity ","Listener was cancelled");
 
             }
         });
 
-        String currentWeek = firstDayOfTheWeek.replaceAll("/", "-") + " until "+lastDayOfTheWeek.replaceAll("/", "-");
+        String currentWeek = firstDayOfTheWeek.replaceAll("/", "-") + UNTIL+lastDayOfTheWeek.replaceAll("/", "-");
 
         updateView(currentWeek);
 
-        list = new ArrayList<HashMap<String,String>>();
+        ArrayList<HashMap<String, String>> list = new ArrayList<>();
 
-        map =new HashMap<String, String>();
-        map.put(FIRST_COLUMN, "Monday");
+        map = new HashMap<>();
+        map.put(FIRST_COLUMN, MONDAY);
         list.add(map);
 
-        map2 =new HashMap<String, String>();
-        map2.put(FIRST_COLUMN, "Tuesday");
+        map2 = new HashMap<>();
+        map2.put(FIRST_COLUMN, TUESDAY);
         list.add(map2);
 
-        map3 =new HashMap<String, String>();
-        map3.put(FIRST_COLUMN, "Wednesday");
+        map3 = new HashMap<>();
+        map3.put(FIRST_COLUMN, WEDNESDAY);
         list.add(map3);
 
-        map4 =new HashMap<String, String>();
-        map4.put(FIRST_COLUMN, "Thursday");
+        map4 = new HashMap<>();
+        map4.put(FIRST_COLUMN, THURSDAY);
         list.add(map4);
 
-        map5 =new HashMap<String, String>();
-        map5.put(FIRST_COLUMN, "Friday");
+        map5 = new HashMap<>();
+        map5.put(FIRST_COLUMN, FRIDAY);
         list.add(map5);
 
-        map6 =new HashMap<String, String>();
-        map6.put(FIRST_COLUMN, "Saturday");
+        map6 = new HashMap<>();
+        map6.put(FIRST_COLUMN, SATURDAY);
         list.add(map6);
 
-        map7 =new HashMap<String, String>();
-        map7.put(FIRST_COLUMN, "Sunday");
+        map7 = new HashMap<>();
+        map7.put(FIRST_COLUMN, SUNDAY);
         list.add(map7);
 
         // call the method to initialize the stauts Icon, the fourth column.
@@ -209,15 +231,15 @@ public class ListCalendar extends AppCompatActivity {
 
         if (bundle != null) {
 
-            mondayDelivery = bundle.getString("mondayDeliveries");
-            tuesdayDelivery = bundle.getString("tuesdayDeliveries");
-            wednesdayDelivery = bundle.getString("wednesdayDeliveries");
-            thursdayDelivery = bundle.getString("thursdayDeliveries");
-            fridayDelivery = bundle.getString("fridayDeliveries");
-            saturdayDelivery = bundle.getString("saturdayDeliveries");
-            sundayDelivery = bundle.getString("sundayDeliveries");
+            String mondayDelivery = bundle.getString("mondayDeliveries");
+            String tuesdayDelivery = bundle.getString("tuesdayDeliveries");
+            String wednesdayDelivery = bundle.getString("wednesdayDeliveries");
+            String thursdayDelivery = bundle.getString("thursdayDeliveries");
+            String fridayDelivery = bundle.getString("fridayDeliveries");
+            String saturdayDelivery = bundle.getString("saturdayDeliveries");
+            String sundayDelivery = bundle.getString("sundayDeliveries");
 
-            updateStatusIcon(mondayDelivery,tuesdayDelivery,wednesdayDelivery,thursdayDelivery,fridayDelivery,saturdayDelivery,sundayDelivery);
+            updateStatusIcon(mondayDelivery, tuesdayDelivery, wednesdayDelivery, thursdayDelivery, fridayDelivery, saturdayDelivery, sundayDelivery);
 
         }
 
@@ -228,16 +250,16 @@ public class ListCalendar extends AppCompatActivity {
         previousWeekBtn.setVisibility(View.INVISIBLE);
 
         //Next Week Button
-        nextWeekBtn = (Button) findViewById(R.id.nextWeekBtn);
+        Button nextWeekBtn = (Button) findViewById(R.id.nextWeekBtn);
 
         //Home Button
-        homeBtn = (Button) findViewById(R.id.homeBtn);
+        Button homeBtn = (Button) findViewById(R.id.homeBtn);
 
         homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(ListCalendar.this, LoginActivity.class);
+                Intent intent = new Intent(ListCalendarActivity.this, LoginActivity.class);
 
                 startActivity(intent);
             }
@@ -263,12 +285,12 @@ public class ListCalendar extends AppCompatActivity {
 
                 lastDayOfTheWeek = simpleDateFormat.format(calendar.getTime());
 
-                datesView.setText(firstDayOfTheWeek+" until "+lastDayOfTheWeek);
+                datesView.setText(firstDayOfTheWeek+UNTIL+lastDayOfTheWeek);
 
                 previousWeekBtn.setVisibility(View.VISIBLE);
 
                 // pass the current week to the method that populates the schedule
-                String currentWeek = firstDayOfTheWeek.replaceAll("/", "-") + " until "+lastDayOfTheWeek.replaceAll("/", "-");
+                String currentWeek = firstDayOfTheWeek.replaceAll("/", "-") + UNTIL+lastDayOfTheWeek.replaceAll("/", "-");
 
                 updateView(currentWeek);
             }
@@ -291,10 +313,10 @@ public class ListCalendar extends AppCompatActivity {
 
                 firstDayOfTheWeek = simpleDateFormat.format(calendar.getTime());
 
-                datesView.setText(firstDayOfTheWeek+" until "+lastDayOfTheWeek);
+                datesView.setText(firstDayOfTheWeek+UNTIL+lastDayOfTheWeek);
 
                 // pass the current week to the method that populates the schedule
-                String currentWeek = firstDayOfTheWeek.replaceAll("/", "-") + " until "+lastDayOfTheWeek.replaceAll("/", "-");
+                String currentWeek = firstDayOfTheWeek.replaceAll("/", "-") + UNTIL+lastDayOfTheWeek.replaceAll("/", "-");
 
                 updateView(currentWeek);
 
@@ -329,59 +351,62 @@ public class ListCalendar extends AppCompatActivity {
                 // ListView Clicked item index
                 int itemPosition = position+1;
 
-                Intent intent = new Intent(ListCalendar.this, AddDeliveriesActivity.class);
+                Intent intent = new Intent(ListCalendarActivity.this, AddDeliveriesActivity.class);
 
                 switch (itemPosition) {
 
                     case 1:
                         intent.putExtra("day", "Monday");
-                        intent.putExtra("place", map.get(SECOND_COLUMN));
+                        intent.putExtra(PLACE, map.get(SECOND_COLUMN));
                         intent.putExtra("time", map.get(THIRD_COLUMN));
-                        intent.putExtra("itemPosition", itemPosition-1);
+                        intent.putExtra(ITEM_POSITION, itemPosition-1);
                         break;
 
                     case 2:
                         intent.putExtra("day", "Tuesday");
-                        intent.putExtra("place", map2.get(SECOND_COLUMN));
+                        intent.putExtra(PLACE, map2.get(SECOND_COLUMN));
                         intent.putExtra("time", map2.get(THIRD_COLUMN));
-                        intent.putExtra("itemPosition", itemPosition-1);
+                        intent.putExtra(ITEM_POSITION, itemPosition-1);
                         break;
 
                     case 3:
                         intent.putExtra("day", "Wednesday");
-                        intent.putExtra("place", map3.get(SECOND_COLUMN));
+                        intent.putExtra(PLACE, map3.get(SECOND_COLUMN));
                         intent.putExtra("time", map3.get(THIRD_COLUMN));
-                        intent.putExtra("itemPosition", itemPosition-1);
+                        intent.putExtra(ITEM_POSITION, itemPosition-1);
                         break;
 
                     case 4:
                         intent.putExtra("day", "Thursday");
-                        intent.putExtra("place", map4.get(SECOND_COLUMN));
+                        intent.putExtra(PLACE, map4.get(SECOND_COLUMN));
                         intent.putExtra("time", map4.get(THIRD_COLUMN));
-                        intent.putExtra("itemPosition", itemPosition-1);
+                        intent.putExtra(ITEM_POSITION, itemPosition-1);
                         break;
 
                     case 5:
                         intent.putExtra("day", "Friday");
-                        intent.putExtra("place", map5.get(SECOND_COLUMN));
+                        intent.putExtra(PLACE, map5.get(SECOND_COLUMN));
                         intent.putExtra("time", map5.get(THIRD_COLUMN));
-                        intent.putExtra("itemPosition", itemPosition-1);
+                        intent.putExtra(ITEM_POSITION, itemPosition-1);
                         break;
 
                     case 6:
                         intent.putExtra("day", "Saturday");
-                        intent.putExtra("place", map6.get(SECOND_COLUMN));
+                        intent.putExtra(PLACE, map6.get(SECOND_COLUMN));
                         intent.putExtra("time", map6.get(THIRD_COLUMN));
-                        intent.putExtra("itemPosition", itemPosition-1);
+                        intent.putExtra(ITEM_POSITION, itemPosition-1);
                         break;
 
                     case 7:
                         intent.putExtra("day", "Sunday");
-                        intent.putExtra("place", map7.get(SECOND_COLUMN));
+                        intent.putExtra(PLACE, map7.get(SECOND_COLUMN));
                         intent.putExtra("time", map7.get(THIRD_COLUMN));
-                        intent.putExtra("itemPosition", itemPosition-1);
+                        intent.putExtra(ITEM_POSITION, itemPosition-1);
                         break;
 
+                        default:
+                            Log.i("ListCalendarActivity ", String.valueOf(itemPosition));
+                            break;
                 }
 
                 // send the maps to the AddDeliveries activity containing Day, place and time
@@ -398,27 +423,17 @@ public class ListCalendar extends AppCompatActivity {
                 intent.putExtra("lastDayOfTheWeek", lastDayOfTheWeek);
 
                 startActivity(intent);
-
-                // Show Alert
-                Toast.makeText(ListCalendar.this, Integer.toString(itemPosition)+" Clicked", Toast.LENGTH_LONG).show();
             }
         });
 
     }//end of onCreate
 
-    @Override
-    protected void onResume() {
 
-        super.onResume();
-
-    }
-
-
-    private void updateView(String week){
+    public void updateView(String week){
 
         url = FirebaseDatabase.getInstance().getReference();
 
-            DatabaseReference dailySchedulePlace = url.child("Rota").child(uid).child("Week:"+week);
+            DatabaseReference dailySchedulePlace = url.child(ROTA).child(uid).child(WEEK+week);
 
             dailySchedulePlace.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -426,9 +441,9 @@ public class ListCalendar extends AppCompatActivity {
 
                     if (!dataSnapshot.exists()) {
 
-                    Toast.makeText(ListCalendar.this, "No data have been supplied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ListCalendarActivity.this, "No data have been supplied", Toast.LENGTH_SHORT).show();
 
-                    clearSchedule();
+                    utils.clearSchedule(ListCalendarActivity.this);
 
                     }
 
@@ -436,40 +451,44 @@ public class ListCalendar extends AppCompatActivity {
 
                         switch (dayChild.getKey()) {
 
-                            case "Monday":
-                                    populateSingleDaySchedule(placeStoredMon, timeStoredMon, dayChild, map);
+                            case MONDAY:
+                                    populateSingleDaySchedule(dayChild, map);
 
                                 break;
 
-                            case "Tuesday":
-                                    populateSingleDaySchedule(placeStoredTue, timeStoredTue, dayChild, map2);
+                            case TUESDAY:
+                                    populateSingleDaySchedule(dayChild, map2);
 
                                 break;
 
-                            case "Wednesday":
-                                    populateSingleDaySchedule(placeStoredWed, timeStoredWed, dayChild, map3);
+                            case WEDNESDAY:
+                                    populateSingleDaySchedule(dayChild, map3);
 
                                 break;
 
-                            case "Thursday":
-                                    populateSingleDaySchedule(placeStoredThu, timeStoredThu, dayChild, map4);
+                            case THURSDAY:
+                                    populateSingleDaySchedule(dayChild, map4);
 
                                 break;
 
-                            case "Friday":
-                                    populateSingleDaySchedule(placeStoredFri, timeStoredFri, dayChild, map5);
+                            case FRIDAY:
+                                    populateSingleDaySchedule(dayChild, map5);
 
                                 break;
 
-                            case "Saturday":
-                                    populateSingleDaySchedule(placeStoredSat, timeStoredSat, dayChild, map6);
+                            case SATURDAY:
+                                    populateSingleDaySchedule(dayChild, map6);
 
                                 break;
 
-                            case "Sunday":
-                                   populateSingleDaySchedule(placeStoredSun, timeStoredSun, dayChild, map7);
+                            case SUNDAY:
+                                   populateSingleDaySchedule(dayChild, map7);
 
                                 break;
+
+                                default:
+                                    Log.i("ListClndar updateView ", dayChild.getKey());
+                                    break;
 
                             }
 
@@ -480,58 +499,62 @@ public class ListCalendar extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                /* Not used */
                 }
             });
 
-        String daysToCheck []= {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        String [] daysToCheck = {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
 
         for (int i=0; i <daysToCheck.length; i++) {
 
-            DatabaseReference dayToListenForChanges = url.child("Rota").child(uid).child("Week:" + week).child(daysToCheck[i]);
+            DatabaseReference dayToListenForChanges = url.child(ROTA).child(uid).child("Week:" + week).child(daysToCheck[i]);
 
             dayToListenForChanges.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    /*Not used */
                 }
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                    Toast.makeText(ListCalendar.this, "Notification change Listener triggered", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ListCalendarActivity.this, "Notification change Listener triggered", Toast.LENGTH_LONG).show();
 
-                    triggerNotificationOnShiftChange();
+                    utils.triggerNotificationOnShiftChange(ACTION_ONE, ListCalendarActivity.this);
 
                 }
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    /*Not used */
                 }
 
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    /*Not used */
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    /*Not used */
                 }
 
             });
         }
     }
 
-    private void populateSingleDaySchedule(String placeStored, String timeStored, DataSnapshot dayChild, HashMap<String,String> tempMap) {
+    private void populateSingleDaySchedule(DataSnapshot dayChild, HashMap<String, String> tempMap) {
 
         for (DataSnapshot childOfDay : dayChild.getChildren()) {
 
             if (childOfDay.getKey().equals("Place")) {
 
-                placeStored = childOfDay.getValue(String.class);
+                String placeStored = childOfDay.getValue(String.class);
                 tempMap.put(SECOND_COLUMN, placeStored);
                 adapter.notifyDataSetChanged();
 
             } else if (childOfDay.getKey().equals("Time")) {
 
-                timeStored = childOfDay.getValue(String.class);
+                String timeStored = childOfDay.getValue(String.class);
 
                 tempMap.put(THIRD_COLUMN, timeStored);
 
@@ -553,61 +576,14 @@ public class ListCalendar extends AppCompatActivity {
             }
         }
 
-     private void clearSchedule () {
+    private void hasCourierAddedDeliveries () {
 
-         placeStoredMon = "";
-         placeStoredTue = "";
-         placeStoredWed = "";
-         placeStoredThu = "";
-         placeStoredFri = "";
-         placeStoredSat = "";
-         placeStoredSun = "";
-         timeStoredMon = "";
-         timeStoredTue = "";
-         timeStoredWed = "";
-         timeStoredThu = "";
-         timeStoredFri = "";
-         timeStoredSat = "";
-         timeStoredSun = "";
-
-         map.put(SECOND_COLUMN, placeStoredMon);
-         map2.put(SECOND_COLUMN, placeStoredTue);
-         map3.put(SECOND_COLUMN, placeStoredWed);
-         map4.put(SECOND_COLUMN, placeStoredThu);
-         map5.put(SECOND_COLUMN, placeStoredFri);
-         map6.put(SECOND_COLUMN, placeStoredSat);
-         map7.put(SECOND_COLUMN, placeStoredSun);
-
-         map.put(THIRD_COLUMN, timeStoredMon);
-         map2.put(THIRD_COLUMN, timeStoredTue);
-         map3.put(THIRD_COLUMN, timeStoredWed);
-         map4.put(THIRD_COLUMN, timeStoredThu);
-         map5.put(THIRD_COLUMN, timeStoredFri);
-         map6.put(THIRD_COLUMN, timeStoredSat);
-         map7.put(THIRD_COLUMN, timeStoredSun);
-         populateWithPendingIcon(map);
-         populateWithPendingIcon(map2);
-         populateWithPendingIcon(map3);
-         populateWithPendingIcon(map4);
-         populateWithPendingIcon(map5);
-         populateWithPendingIcon(map6);
-         populateWithPendingIcon(map7);
-
-         // update the list view
-         listView.setAdapter(adapter);
-
-         // this is to implement 1.2A till 1.2C user should not be able to click on a schedule ahead from the current week
-         scheduleIsCleared = true;
-     }
-
-     private void hasCourierAddedDeliveries () {
-
-         rowItems = new ArrayList<RowItem>();
+         rowItems = new ArrayList<>();
 
          url = FirebaseDatabase.getInstance().getReference();
 
-         DatabaseReference dayToCheck = url.child("Rota").child(uid)
-                 .child("Week:"+firstDayOfTheWeek.replaceAll("/", "-") + " until "+lastDayOfTheWeek.replaceAll("/", "-"));
+         DatabaseReference dayToCheck = url.child(ROTA).child(uid)
+                 .child("Week:"+firstDayOfTheWeek.replaceAll("/", "-") + UNTIL+lastDayOfTheWeek.replaceAll("/", "-"));
 
          dayToCheck.addValueEventListener(new ValueEventListener() {
              @Override
@@ -617,47 +593,50 @@ public class ListCalendar extends AppCompatActivity {
 
                      switch (dayChild.getKey()) {
 
-                         case "Monday":
+                         case MONDAY:
 
                              readFromDBStatusIcon(map, dayChild);
                              break;
 
-                         case "Tuesday":
+                         case TUESDAY:
 
                              readFromDBStatusIcon(map2, dayChild);
                              break;
 
-                         case "Wednesday":
+                         case WEDNESDAY:
 
                              readFromDBStatusIcon(map3, dayChild);
                              break;
 
-                         case "Thursday":
+                         case THURSDAY:
 
                              readFromDBStatusIcon(map4, dayChild);
                              break;
 
-                         case "Friday":
+                         case FRIDAY:
 
                              readFromDBStatusIcon(map5, dayChild);
                              break;
 
-                         case "Saturday":
+                         case SATURDAY:
 
                              readFromDBStatusIcon(map6, dayChild);
                              break;
 
-                         case "Sunday":
+                         case SUNDAY:
 
                              readFromDBStatusIcon(map7, dayChild);
                              break;
 
+                             default:
+                                 Log.i("hasCourierAddDeliveries", dayChild.getKey());
+                                 break;
                         }
                     }
                 }
              @Override
              public void onCancelled(DatabaseError databaseError) {
-
+                /*Not used */
              }
          });
 
@@ -675,9 +654,9 @@ public class ListCalendar extends AppCompatActivity {
     private void updateStatusIcon (String monStr, String tueStr, String wedStr, String thuStr,
                                    String friStr, String satStr, String sunStr) {
 
-        rowItems = new ArrayList<RowItem>();
+        rowItems = new ArrayList<>();
 
-        if (daysCourierIsON.size() > 0) {
+        if (!daysCourierIsON.isEmpty()) {
 
             for (int i = 0; i < daysCourierIsON.size(); i++) {
 
@@ -710,9 +689,9 @@ public class ListCalendar extends AppCompatActivity {
 
             if (timeStored.equals("OFF")) {
 
-                RowItem item = new RowItem(xIcon);
+                RowItem item = new RowItem(X_ICON);
 
-                tempMap.put(FOURTH_COLUMN, String.valueOf(xIcon));
+                tempMap.put(FOURTH_COLUMN, String.valueOf(X_ICON));
 
                 rowItems.add(item);
 
@@ -722,9 +701,9 @@ public class ListCalendar extends AppCompatActivity {
 
         if (dayChild.hasChild("Deliveries")) {
 
-            RowItem item = new RowItem(tickIcon);
+            RowItem item = new RowItem(TICK_ICON);
 
-            tempMap.put(FOURTH_COLUMN, String.valueOf(tickIcon));
+            tempMap.put(FOURTH_COLUMN, String.valueOf(TICK_ICON));
 
             rowItems.add(item);
 
@@ -734,9 +713,9 @@ public class ListCalendar extends AppCompatActivity {
 
         else if (!dayChild.hasChild("Deliveries") && !timeStored.equals("OFF")) {
 
-            RowItem item = new RowItem(pendingIcon);
+            RowItem item = new RowItem(PENDING_ICON);
 
-            tempMap.put(FOURTH_COLUMN, String.valueOf(pendingIcon));
+            tempMap.put(FOURTH_COLUMN, String.valueOf(PENDING_ICON));
 
             rowItems.add(item);
 
@@ -747,18 +726,7 @@ public class ListCalendar extends AppCompatActivity {
         // send the notification only if they haven't filled all the deliveries and it is Sunday
         if (courierHasNotAddedDeliveriesOnAtLeastOneDay && day == 1) {
 
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-            Intent notificationIntent = new Intent(this, AlarmReceiver.class);
-
-            notificationIntent.setAction(ACTION_TWO);
-
-            notificationIntent.addCategory("android.intent.category.DEFAULT");
-
-            PendingIntent broadcast = PendingIntent.getBroadcast(this, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                    + AlarmManager.RTC_WAKEUP, AlarmManager.RTC_WAKEUP, broadcast);
+            utils.triggerNotificationOnShiftChange(ACTION_TWO, ListCalendarActivity.this);
 
         }
     }
@@ -769,9 +737,9 @@ public class ListCalendar extends AppCompatActivity {
 
             if (day.equals("")) {
 
-                RowItem item = new RowItem(pendingIcon);
+                RowItem item = new RowItem(PENDING_ICON);
 
-                tempMap.put(FOURTH_COLUMN, String.valueOf(pendingIcon));
+                tempMap.put(FOURTH_COLUMN, String.valueOf(PENDING_ICON));
 
                 rowItems.add(item);
 
@@ -779,9 +747,9 @@ public class ListCalendar extends AppCompatActivity {
 
             else if (day.matches(".*\\d+.*")) {
 
-                RowItem item = new RowItem(tickIcon);
+                RowItem item = new RowItem(TICK_ICON);
 
-                tempMap.put(FOURTH_COLUMN, String.valueOf(tickIcon));
+                tempMap.put(FOURTH_COLUMN, String.valueOf(TICK_ICON));
 
                 rowItems.add(item);
 
@@ -791,29 +759,58 @@ public class ListCalendar extends AppCompatActivity {
 
     private void populateWithPendingIcon (Map tempMap) {
 
-        RowItem item = new RowItem(pendingIcon);
+        RowItem item = new RowItem(PENDING_ICON);
 
-        tempMap.put(FOURTH_COLUMN, String.valueOf(pendingIcon));
+        tempMap.put(FOURTH_COLUMN, String.valueOf(PENDING_ICON));
 
         rowItems.add(item);
     }
 
-    private void triggerNotificationOnShiftChange ()  {
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        //Intent notificationIntent = new Intent("android.media.action.DISPLAY_NOTIFICATION");
-        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
-
-        notificationIntent.setAction(ACTION_ONE);
-
-        notificationIntent.addCategory("android.intent.category.DEFAULT");
-
-        PendingIntent broadcast = PendingIntent.getBroadcast(this, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + AlarmManager.RTC_WAKEUP, AlarmManager.RTC_WAKEUP, broadcast);
-
+    public boolean isScheduleCleared() {
+        return scheduleIsCleared;
     }
 
+    public void setScheduleIsCleared(boolean scheduleIsCleared) {
+        this.scheduleIsCleared = scheduleIsCleared;
+    }
+
+    public HashMap<String, String> getMap() {
+        return map;
+    }
+
+    public HashMap<String, String> getMap2() {
+        return map2;
+    }
+
+    public HashMap<String, String> getMap3() {
+        return map3;
+    }
+
+    public HashMap<String, String> getMap4() {
+        return map4;
+    }
+
+    public HashMap<String, String> getMap5() {
+        return map5;
+    }
+
+    public HashMap<String, String> getMap6() {
+        return map6;
+    }
+
+    public HashMap<String, String> getMap7() {
+        return map7;
+    }
+
+    public ListView getListView() {
+        return listView;
+    }
+
+    public ListViewAdapter getAdapter() {
+        return adapter;
+    }
+
+    public List<RowItem> getRowItems() {
+        return rowItems;
+    }
 }

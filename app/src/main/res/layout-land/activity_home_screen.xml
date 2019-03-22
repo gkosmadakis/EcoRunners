@@ -9,7 +9,7 @@
     android:id="@+id/relativeViewID"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="uk.co.ecorunners.ecorunners.MainActivity">
+    tools:context="uk.co.ecorunners.ecorunners.activity.MainActivity">
 
     <ImageView
         android:id="@+id/logoView"

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import uk.co.ecorunners.ecorunners.activity.LoginActivity;
+
 /**
  * Created by cousm on 02/08/2017.
  */
@@ -12,7 +14,7 @@ import android.os.Handler;
 public class SplashScreen extends Activity {
 
     // Splash screen timer
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int splashTimeOut = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,6 @@ public class SplashScreen extends Activity {
                 // close this activity
                 finish();
             }
-        }, SPLASH_TIME_OUT);
+        }, splashTimeOut);
     }
 }

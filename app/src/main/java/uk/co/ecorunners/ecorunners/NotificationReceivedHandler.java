@@ -5,22 +5,35 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.StrictMode;
+import android.util.Log;
+import android.view.ContextThemeWrapper;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.onesignal.OSNotification;
 import com.onesignal.OneSignal;
 
 import org.json.JSONObject;
 
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
+
+import uk.co.ecorunners.ecorunners.utils.MainActivityUtil;
+import uk.co.ecorunners.ecorunners.utils.Utils;
+
+import static uk.co.ecorunners.ecorunners.utils.Constants.CURLY_BRACES_REGEX;
+import static uk.co.ecorunners.ecorunners.utils.Constants.LASTNAME;
+import static uk.co.ecorunners.ecorunners.utils.Constants.NAME;
+import static uk.co.ecorunners.ecorunners.utils.Constants.OK_CLICKED;
+import static uk.co.ecorunners.ecorunners.utils.Constants.SUPPORT;
+import static uk.co.ecorunners.ecorunners.utils.Constants.USERS;
 
 /**
  * Created by cousm on 06/10/2017.
@@ -28,16 +41,20 @@ import java.util.Set;
 
 public class NotificationReceivedHandler implements OneSignal.NotificationReceivedHandler {
 
-    static Context context;
-    public static Map<String, Set<String>> dayToUserID;
-    public String userLogged_In_ID;
-    public static Map<String, Set<String>> userIDToNameLastName;
-    private static Set<String> user_ID_To_notify;
-    private static LinkedHashSet<String> adminUsersID;
+    private Context context;
+    private String userLoggedInID;
+    private Map<String, Set<String>> userIDToNameLastName;
+    private Set<String> userIDToNotify;
+    private Set<String> adminUsersID;
+    private Utils util;
+    private AlertDialog alert;
 
-    public NotificationReceivedHandler (Context context) {
+    public NotificationReceivedHandler(Context context) {
+
         this.context = context;
+        util = new Utils();
     }
+
     @Override
     public void notificationReceived(OSNotification notification) {
 
@@ -45,222 +62,220 @@ public class NotificationReceivedHandler implements OneSignal.NotificationReceiv
 
         String body = notification.payload.body;
 
-        dayToUserID = MainActivity.getDayToUserID();
+        MainActivityUtil mainUtil = new MainActivityUtil();
 
-        userLogged_In_ID = MainActivity.getUserID();
+        Map<String, Set<String>> dayToUserID = mainUtil.readDBToFindCouriersOnCover();
 
-        userIDToNameLastName = MainActivity.getUserIDToNameLastName();
+        userLoggedInID = mainUtil.getLoggedInUser();
 
-        adminUsersID = MainActivity.getUserAdminsID();
+        userIDToNameLastName = mainUtil.readDBToFindNameLastNameByID(FirebaseDatabase.getInstance().getReference().child(USERS),userLoggedInID,null);
 
-        user_ID_To_notify = new LinkedHashSet<String>();
+        DatabaseReference url = FirebaseDatabase.getInstance().getReference();
 
-        // retrieve which users by user ID are on cover the current day
-        for (String key: dayToUserID.keySet()) {
+        adminUsersID = util.readDBToFindAdminUsers(url);
 
-            if (key.equals(getTheCurrentDay ())) {
-
-                user_ID_To_notify = dayToUserID.get(key);
-
-            }
-        }
+        userIDToNotify = findUsersOnCover(dayToUserID);
 
         if (body != null) {
 
             if (body.contains("Emergency")) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_LIGHT)
-                        .setTitle("THIS IS AN EMERGENCY NOTIFICATION")
-                        // remove the leading and trailing curly braces as well as the colon
-                        .setMessage(data.toString().replaceAll("[{^\"|\"$}]", "").replaceAll(":", " "));
-
-                AlertDialog alert1;
-
-                builder.setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                dialog.cancel();
-
-                                System.out.println("OK CLICKED");
-
-                            }
-                        });
-
-                alert1 = builder.create();
-
-                alert1.show();
+                showEmergencyNotification(data);
             }
 
             else if (body.contains("Support")) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_LIGHT)
-                        .setTitle("THIS IS A SUPPORT NOTIFICATION")
-                        // remove the leading and trailing curly braces as well as the colon
-                        .setMessage(data.toString().replaceAll("[{^\"|\"$}]", "").replaceAll(":", " "));
-
-                AlertDialog alert1;
-
-                builder.setPositiveButton("YES",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                dialog.cancel();
-
-                                System.out.println("YES CLICKED");
-
-                                // send notification to other cover couriers that have been sent support notification
-                                for (String user_ID : user_ID_To_notify) {
-
-                                    //exclude the logged in user and send notification to the other couriers who are onCover
-                                    if (!user_ID.equals(userLogged_In_ID)){
-
-                                        //send notification to other couriers
-                                        sendNotificationsToUser(user_ID, "support");
-
-                                    }
-                                }
-
-                                //send to management team to inform that this courier is going for support
-                                for (String user_ID : adminUsersID) {
-
-                                    if (!user_ID.equals(userLogged_In_ID)){
-
-                                        //send notification to management
-                                        sendNotificationsToUser(user_ID, "support");
-
-                                    }
-
-                                }
-                            }
-                        });
-
-                builder.setNegativeButton("NO",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                System.out.println("NO CLICKED");
-
-                                // Do nothing
-                                dialog.dismiss();
-
-                            }
-                        });
-
-                alert1 = builder.create();
-
-                alert1.show();
+                showSupportNotification(data);
 
             }
 
             else if (body.contains("has accepted the support request")) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_LIGHT)
-                        .setTitle("INFORMATION")
-                        // remove the leading and trailing curly braces as well as the colon
-                        .setMessage(data.toString().replaceAll("[{^\"|\"$}]", "").replaceAll(":", " ")+" has accepted the support request");
-
-                AlertDialog alert1;
-
-                builder.setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                dialog.cancel();
-
-                                System.out.println("OK CLICKED");
-
-                            }
-                        });
-
-                alert1 = builder.create();
-
-                alert1.show();
+                showHasAcceptedSupportRequest(data);
 
             }
 
             else if (body.contains("You have shift in one hour")) {
 
-                // remove the leading and trailing curly braces as well as the colon
-                // and remove the leading : colon
-                String messageToDisplay = data.toString().replaceAll("[{^\"|\"$}]", "");
-
-                if (messageToDisplay.startsWith(":")) {
-
-                    messageToDisplay = messageToDisplay.substring(1, data.toString().replaceAll("[{^\"|\"$}]", "").length());
-
-                }
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_LIGHT)
-                        .setTitle("ONE HOUR BEFORE SHIFT")
-                        .setMessage(messageToDisplay);
-
-                AlertDialog alert1;
-
-                builder.setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                dialog.cancel();
-
-                                System.out.println("OK CLICKED");
-                            }
-                });
-
-                alert1 = builder.create();
-
-                alert1.show();
+                showNotificationOneHourBeforeShift(data);
 
             }
         }
 
     }
 
-    private void sendNotificationsToUser (final String user_ID, final String typeOfNotification) {
+    public void showNotificationOneHourBeforeShift(JSONObject data) {
+        // remove the leading and trailing curly braces as well as the colon
+        // and remove the leading : colon
+        String messageToDisplay = data.toString().replaceAll(CURLY_BRACES_REGEX, "");
+
+        if (messageToDisplay.startsWith(":")) {
+
+            messageToDisplay = messageToDisplay.substring(1, data.toString().replaceAll(CURLY_BRACES_REGEX, "").length());
+
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, android.R.style.Theme_Holo_Light_Dialog))
+                .setTitle("ONE HOUR BEFORE SHIFT")
+                .setMessage(messageToDisplay);
+
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+
+                        Log.i("Ok Clicked", OK_CLICKED);
+                    }
+        });
+
+        alert = builder.create();
+
+        alert.show();
+    }
+
+    public void showHasAcceptedSupportRequest(JSONObject data) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, android.R.style.Theme_Holo_Light_Dialog))
+                .setTitle("INFORMATION")
+                // remove the leading and trailing curly braces as well as the colon
+                .setMessage(data.toString().replaceAll(CURLY_BRACES_REGEX, "").replaceAll(":", " ")+" has accepted the support request");
+
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+
+                        Log.i("Ok Clicked ", OK_CLICKED);
+
+                    }
+                });
+
+        alert = builder.create();
+
+        alert.show();
+    }
+
+    public void showSupportNotification(JSONObject data) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, android.R.style.Theme_Holo_Light_Dialog))
+                .setTitle("THIS IS A SUPPORT NOTIFICATION")
+                // remove the leading and trailing curly braces as well as the colon
+                .setMessage(data.toString().replaceAll(CURLY_BRACES_REGEX, "").replaceAll(":", " "));
+
+        builder.setPositiveButton("YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+
+                        Log.i("Yes Clicked ","YES CLICKED");
+
+                        // send notification to other cover couriers that have been sent support notification
+                        for (String user_ID : userIDToNotify) {
+
+                            //exclude the logged in user and send notification to the other couriers who are onCover
+                            if (!user_ID.equals(userLoggedInID)){
+
+                                //send notification to other couriers
+                                sendNotificationsToUser(user_ID, userIDToNameLastName, userLoggedInID);
+
+                            }
+                        }
+
+                        //send to management team to inform that this courier is going for support
+                        for (String user_ID : adminUsersID) {
+
+                            if (!user_ID.equals(userLoggedInID)){
+
+                                //send notification to management
+                                sendNotificationsToUser(user_ID, userIDToNameLastName, userLoggedInID);
+
+                            }
+
+                        }
+                    }
+                });
+
+        builder.setNegativeButton("NO",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Log.i("No Clicked ", "NO CLICKED");
+
+                        // Do nothing
+                        dialog.dismiss();
+
+                    }
+                });
+
+        alert = builder.create();
+
+        alert.show();
+    }
+
+    public void showEmergencyNotification(JSONObject data) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(context, android.R.style.Theme_Holo_Light_Dialog))
+                .setTitle("THIS IS AN EMERGENCY NOTIFICATION")
+                // remove the leading and trailing curly braces as well as the colon
+                .setMessage(data.toString().replaceAll(CURLY_BRACES_REGEX, "").replaceAll(":", " "));
+
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+
+                        Log.i("OK Clicked", OK_CLICKED);
+
+                    }
+                });
+
+        alert = builder.create();
+
+        alert.show();
+    }
+
+    public Set findUsersOnCover(Map<String, Set<String>> dayToUserID) {
+
+        userIDToNotify = new LinkedHashSet<>();
+
+        // retrieve which users by user ID are on cover the current day
+        for (Map.Entry<String, Set<String>> entry: dayToUserID.entrySet()) {
+
+            if (entry.getKey().equals(getTheCurrentDay())) {
+
+                userIDToNotify = dayToUserID.get(entry.getKey());
+
+            }
+        }
+        return userIDToNotify;
+    }
+
+    private void sendNotificationsToUser(final String user_ID, final Map userIDToNameLastName, final String userLoggedInID) {
 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
 
-                int SDK_INT = android.os.Build.VERSION.SDK_INT;
+                int sdkInt = android.os.Build.VERSION.SDK_INT;
 
-                if (SDK_INT > 8) {
+                if (sdkInt > 8) {
 
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                             .permitAll().build();
 
                     StrictMode.setThreadPolicy(policy);
 
-                    String name = "";
+                    String name = getFirstName(userIDToNameLastName, userLoggedInID);
 
-                    String lastname = "";
-
-                    Set <String> values = userIDToNameLastName.get(userLogged_In_ID);
-
-                    for (String valueName: values) {
-
-                        if (valueName.startsWith("name")){
-
-                            String namesArray[] = valueName.split(":");
-
-                            name = namesArray[1];
-
-                        }
-
-                        if (valueName.startsWith("lastname")){
-
-                            String namesArray[] = valueName.split(":");
-
-                            lastname = namesArray[1];
-
-                        }
-                    }
+                    String lastname = getLastName(userIDToNameLastName, userLoggedInID);
 
                     try {
-
-                        String jsonResponse;
 
                         URL url = new URL("https://onesignal.com/api/v1/notifications");
 
@@ -280,68 +295,72 @@ public class NotificationReceivedHandler implements OneSignal.NotificationReceiv
 
                         String strJsonBody = "";
 
-                        if (typeOfNotification.equals("support")){
+                        strJsonBody = "{"
+                                + "\"app_id\": \"4b78e5b2-4259-476d-9d30-af4419c6556f\","
 
-                            strJsonBody = "{"
-                                    + "\"app_id\": \"4b78e5b2-4259-476d-9d30-af4419c6556f\","
+                                + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + user_ID + "\"}],"
 
-                                    + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + user_ID + "\"}],"
+                                + "\"data\": {\"" + name + " \": \"" + lastname + "\"},"
+                                + "\"contents\": {\"en\": \"Courier "+name +" "+lastname+" has accepted the support request.\"}"
+                                + "}";
 
-                                    + "\"data\": {\"" + name + " \": \"" + lastname + "\"},"
-                                    + "\"contents\": {\"en\": \"Courier "+name +" "+lastname+" has accepted the support request.\"}"
-                                    + "}";
-                        }
+                        Log.i("strJsonBody:\n", strJsonBody);
 
-                        System.out.println("strJsonBody:\n" + strJsonBody);
+                        byte[] sendBytes = strJsonBody.getBytes(StandardCharsets.UTF_8);
 
-                        byte[] sendBytes = strJsonBody.getBytes("UTF-8");
-
-                        con.setFixedLengthStreamingMode(sendBytes.length);
-
-                        OutputStream outputStream = con.getOutputStream();
-
-                        outputStream.write(sendBytes);
-
-                        int httpResponse = con.getResponseCode();
-
-                        System.out.println("httpResponse: " + httpResponse);
-
-                        if (httpResponse >= HttpURLConnection.HTTP_OK
-                                && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
-
-                            Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
-
-                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
-
-                            scanner.close();
-
-                        }
-
-                        else {
-
-                            Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
-
-                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
-
-                            scanner.close();
-
-                        }
-
-                        System.out.println("jsonResponse:\n" + jsonResponse);
-
+                        util.getJsonResponseFromHttpUrlConnection(con, sendBytes);
                     }
 
-                    catch (Throwable t) {
+                    catch (Exception t) {
 
-                        t.printStackTrace();
+                        Log.e("Exception", t.getMessage());
 
                     }
                 }
             }
-        });
+        }
+        );
     }
 
-    private String getTheCurrentDay () {
+    public String getFirstName(Map userIDToNameLastName, String userLoggedInID) {
+
+        String name = "";
+
+        Set<String> values = (Set<String>) userIDToNameLastName.get(userLoggedInID);
+
+        for (String valueName: values) {
+
+            if (valueName.startsWith(NAME)){
+
+                String [] namesArray = valueName.split(":");
+
+                name = namesArray[1];
+
+            }
+        }
+        return name;
+    }
+
+    public String getLastName(Map userIDToNameLastName, String userLoggedInID) {
+
+        String lastname = "";
+
+        Set<String> values = (Set<String>) userIDToNameLastName.get(userLoggedInID);
+
+        for (String valueName: values) {
+
+            if (valueName.startsWith(LASTNAME)){
+
+                String [] namesArray = valueName.split(":");
+
+                lastname = namesArray[1];
+
+            }
+        }
+        return lastname;
+    }
+
+    public String getTheCurrentDay () {
 
         //get the current day first
         String weekDay;
@@ -356,4 +375,7 @@ public class NotificationReceivedHandler implements OneSignal.NotificationReceiv
 
     }
 
+    public AlertDialog getAlert() {
+        return alert;
+    }
 }

@@ -1,4 +1,4 @@
-package uk.co.ecorunners.ecorunners;
+package uk.co.ecorunners.ecorunners.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,10 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class GuidesActivity extends AppCompatActivity {
+import uk.co.ecorunners.ecorunners.R;
 
-    private TextView guidesContactDetails, couriersRates, shopsGuides,spareBicycleRecord;
-    private Button homeBtn;
+public class GuidesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,15 +18,15 @@ public class GuidesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_guides);
 
 
-        guidesContactDetails = (TextView)findViewById(R.id.courierDetails);
+        TextView guidesContactDetails = (TextView) findViewById(R.id.courierDetails);
 
-        couriersRates = (TextView) findViewById(R.id.courierRates);
+        TextView couriersRates = (TextView) findViewById(R.id.courierRates);
 
-        shopsGuides = (TextView) findViewById(R.id.shopsGuides);
+        TextView shopsGuides = (TextView) findViewById(R.id.shopsGuides);
 
-        spareBicycleRecord = (TextView)findViewById(R.id.spareBicycleRecord);
+        TextView spareBicycleRecord = (TextView) findViewById(R.id.spareBicycleRecord);
 
-        homeBtn = (Button) findViewById(R.id.homeBtn);
+        Button homeBtn = (Button) findViewById(R.id.homeBtn);
 
         guidesContactDetails.setOnClickListener(new View.OnClickListener() {
             @Override

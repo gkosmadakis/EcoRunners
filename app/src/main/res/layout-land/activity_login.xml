@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/blue"
         android:padding="20dp"
-        tools:context="uk.co.ecorunners.ecorunners.LoginActivity">
+        tools:context="uk.co.ecorunners.ecorunners.activity.LoginActivity">
 
 
         <ImageView

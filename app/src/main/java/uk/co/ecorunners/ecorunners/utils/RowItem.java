@@ -1,4 +1,4 @@
-package uk.co.ecorunners.ecorunners;
+package uk.co.ecorunners.ecorunners.utils;
 
 /**
  * Created by cousm on 12/09/2017.
@@ -15,9 +15,5 @@ public class RowItem {
 
     public int getImageId() {
         return imageId;
-    }
-
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
     }
 }

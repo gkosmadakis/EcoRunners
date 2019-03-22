@@ -1,5 +1,6 @@
 package uk.co.ecorunners.ecorunners;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
@@ -11,7 +12,8 @@ import com.firebase.client.Firebase;
 
 public class EcoRunners extends Application {
 
-    private static Context context;
+    @SuppressLint("StaticFieldLeak")
+    private Context context;
 
     @Override
     public void onCreate() {
@@ -20,12 +22,8 @@ public class EcoRunners extends Application {
 
         Firebase.setAndroidContext(this);
 
-        EcoRunners.context = getApplicationContext();
+        this.context = getApplicationContext();
 
-    }
-
-    public static Context getAppContext() {
-        return EcoRunners.context;
     }
 
 }

@@ -13,7 +13,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue"
-    tools:context="uk.co.ecorunners.ecorunners.RegisterActivity">
+    android:id="@+id/registeractivitylayout"
+    tools:context="uk.co.ecorunners.ecorunners.activity.RegisterActivity">
 
     <EditText
         android:id="@+id/nameField"

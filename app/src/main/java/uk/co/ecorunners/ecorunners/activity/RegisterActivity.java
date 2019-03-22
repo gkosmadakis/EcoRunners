@@ -1,20 +1,23 @@
-package uk.co.ecorunners.ecorunners;
+package uk.co.ecorunners.ecorunners.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,26 +25,31 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.LinkedHashSet;
+import java.util.Set;
+
+import uk.co.ecorunners.ecorunners.R;
+import uk.co.ecorunners.ecorunners.utils.Utils;
+
+import static uk.co.ecorunners.ecorunners.utils.Constants.USERS;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText mNameField, mLastNameField, mPhoneField, mFullAddress, mNino, mEmailField, mPasswordField;
-    private Button mRegisterBtn;
-    private TextView registerLabel;
+    private EditText mNameField;
+    private EditText mLastNameField;
+    private EditText mPhoneField;
+    private EditText mFullAddress;
+    private EditText mNino;
+    private EditText mEmailField;
+    private EditText mPasswordField;
     private CheckBox registerCheckBox;
-
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase, url;
-    private ProgressDialog mProgress;
+    private DatabaseReference mDatabase;
+    private ProgressBar progressBar;
     private String email;
-    private LinkedHashSet<String> adminUsersID;
+    private Set<String> adminUsersID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +58,22 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
-        mProgress = new ProgressDialog(this);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+        ConstraintLayout layout = findViewById(R.id.registeractivitylayout);
 
-        registerLabel = (TextView) findViewById(R.id.registerView);
+        progressBar = new ProgressBar(RegisterActivity.this, null,android.R.attr.progressBarStyleLarge);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100,100);
+
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        layout.addView(progressBar,params);
+
+        progressBar.setVisibility(View.GONE);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child(USERS);
+
+        TextView registerLabel = findViewById(R.id.registerView);
 
         String register = "Register";
 
@@ -64,23 +83,23 @@ public class RegisterActivity extends AppCompatActivity {
 
         registerLabel.setText(spanString);
 
-        mNameField = (EditText) findViewById(R.id.nameField);
+        mNameField = findViewById(R.id.nameField);
 
-        mLastNameField = (EditText) findViewById(R.id.lastNameField);
+        mLastNameField = findViewById(R.id.lastNameField);
 
-        mPhoneField = (EditText) findViewById(R.id.phoneNum);
+        mPhoneField = findViewById(R.id.phoneNum);
 
-        mFullAddress = (EditText) findViewById(R.id.fullAddressField);
+        mFullAddress = findViewById(R.id.fullAddressField);
 
-        mNino = (EditText) findViewById(R.id.ninoField);
+        mNino = findViewById(R.id.ninoField);
 
-        mEmailField = (EditText) findViewById(R.id.emailField);
+        mEmailField = findViewById(R.id.emailField);
 
-        mPasswordField = (EditText) findViewById(R.id.passwordField);
+        mPasswordField = findViewById(R.id.passwordField);
 
-        registerCheckBox = (CheckBox) findViewById(R.id.registerCheckBox);
+        registerCheckBox = findViewById(R.id.registerCheckBox);
 
-        mRegisterBtn = (Button) findViewById(R.id.registerBtn);
+        Button mRegisterBtn = findViewById(R.id.registerBtn);
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,8 +109,11 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
+        Utils util = new Utils();
 
-        readDBToFindAdminUsers();
+        DatabaseReference url = FirebaseDatabase.getInstance().getReference();
+
+        adminUsersID = util.readDBToFindAdminUsers(url);
     }// end of Oncreate
 
     private void startRegister() {
@@ -130,9 +152,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             else {
 
-                mProgress.setMessage("Signing up...");
-
-                mProgress.show();
+                progressBar.setVisibility(View.VISIBLE);
 
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -140,26 +160,24 @@ public class RegisterActivity extends AppCompatActivity {
 
                         if (task.isSuccessful()) {
 
-                            String user_id = mAuth.getCurrentUser().getUid();
+                            String userId = mAuth.getCurrentUser().getUid();
 
-                            System.out.println("I AM IN");
+                            Log.i("Logged in ", "I AM IN");
 
-                            DatabaseReference current_user_db = mDatabase.child(user_id);
+                            DatabaseReference currentUserDb = mDatabase.child(userId);
 
-                            current_user_db.child("name").setValue(name);
+                            currentUserDb.child("name").setValue(name);
 
-                            current_user_db.child("lastname").setValue(lastName);
+                            currentUserDb.child("lastname").setValue(lastName);
 
-                            current_user_db.child("phone").setValue(phone);
+                            currentUserDb.child("phone").setValue(phone);
 
-                            current_user_db.child("address").setValue(fullAddress);
+                            currentUserDb.child("address").setValue(fullAddress);
 
-                            current_user_db.child("nino").setValue(nino);
+                            currentUserDb.child("nino").setValue(nino);
 
                             //this is hardcoded that means that this register activity will produce only non Admin users
-                            current_user_db.child("isAdmin").setValue(false);
-
-                            mProgress.dismiss();
+                            currentUserDb.child("isAdmin").setValue(false);
 
                             SharedPreferences sharedPrefs = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
@@ -170,21 +188,15 @@ public class RegisterActivity extends AppCompatActivity {
 
                             // check if registered user is admin. this might change when we know if they want to register users
                             //using another activity. For the time now i will do a check on the database to see what admin users see
-                            if (adminUsersID.contains(user_id)) {
 
-                                //store in preferences the boolean isAdmin
-                                editor.putBoolean("isAdminUser", true);
-                            }
+                            //store in preferences the boolean isAdmin
+                            editor.putBoolean("isAdminUser", adminUsersID.contains(userId));
 
-                            else {
+                            editor.putString("userID", userId);
 
-                                editor.putBoolean("isAdminUser", false);
+                            editor.apply();
 
-                            }
-
-                            editor.putString("userID", user_id);
-
-                            editor.commit();
+                            progressBar.setVisibility(View.GONE);
 
                             Intent mainIntent = new Intent(RegisterActivity.this, LoginActivity.class);
 
@@ -192,6 +204,11 @@ public class RegisterActivity extends AppCompatActivity {
 
                             startActivity(mainIntent);
 
+                        }
+                        else {
+
+                            Log.e("Error", task.getException().getMessage());
+                            Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -208,40 +225,4 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void readDBToFindAdminUsers() {
-
-        url = FirebaseDatabase.getInstance().getReference();
-
-        DatabaseReference allUsersInUsersLevel = url.child("Users");
-
-        adminUsersID = new LinkedHashSet<String>();
-
-        allUsersInUsersLevel.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot userIDLevel : dataSnapshot.getChildren()) {
-
-                    for (DataSnapshot childrenOfID : userIDLevel.getChildren()) {
-
-                        if (childrenOfID.getKey().equals("isAdmin")) {
-
-                            boolean isAdmin = childrenOfID.getValue(Boolean.class);
-
-                            if (isAdmin) {
-
-                                adminUsersID.add(userIDLevel.getKey());
-
-                            }
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 }

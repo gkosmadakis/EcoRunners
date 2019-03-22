@@ -1,12 +1,4 @@
-package uk.co.ecorunners.ecorunners;
-
-import static uk.co.ecorunners.ecorunners.Constants.FIRST_COLUMN;
-import static uk.co.ecorunners.ecorunners.Constants.FOURTH_COLUMN;
-import static uk.co.ecorunners.ecorunners.Constants.SECOND_COLUMN;
-import static uk.co.ecorunners.ecorunners.Constants.THIRD_COLUMN;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+package uk.co.ecorunners.ecorunners.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,20 +8,30 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.HashMap;
+import java.util.List;
+
+import uk.co.ecorunners.ecorunners.R;
+
+import static uk.co.ecorunners.ecorunners.utils.Constants.FIRST_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.FOURTH_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.SECOND_COLUMN;
+import static uk.co.ecorunners.ecorunners.utils.Constants.THIRD_COLUMN;
 /**
  * Created by cousm on 10/08/2017.
  */
 
 public class ListViewAdapter extends ArrayAdapter<RowItem> {
 
-    public ArrayList<HashMap<String, String>> list;
-    TextView txtFirst;
-    TextView txtSecond;
-    TextView txtThird;
-    ImageView txtFourth;
-    Context context;
+    private List<HashMap<String, String>> list;
+    private TextView txtFirst;
+    private TextView txtSecond;
+    private TextView txtThird;
+    private ImageView txtFourth;
+    private Context context;
 
-    public ListViewAdapter(Context context, ArrayList<HashMap<String, String>> list, int resourceId, List<RowItem> items){
+    public ListViewAdapter(Context context, List<HashMap<String, String>> list, int resourceId, List<RowItem> items){
 
         super(context, resourceId, items);
 
@@ -76,17 +78,17 @@ public class ListViewAdapter extends ArrayAdapter<RowItem> {
 
             convertView = mInflater.inflate(R.layout.colmn_row, null);
 
-            txtFirst=(TextView) convertView.findViewById(R.id.day);
+            txtFirst = convertView.findViewById(R.id.day);
 
-            txtSecond=(TextView) convertView.findViewById(R.id.place);
+            txtSecond = convertView.findViewById(R.id.place);
 
-            txtThird=(TextView) convertView.findViewById(R.id.time);
+            txtThird = convertView.findViewById(R.id.time);
 
-            txtFourth=(ImageView)convertView.findViewById(R.id.statusIcon);
+            txtFourth = convertView.findViewById(R.id.statusIcon);
 
             holder = new ViewHolder();
 
-            holder.imageView = (ImageView) convertView.findViewById(R.id.statusIcon);
+            holder.imageView = convertView.findViewById(R.id.statusIcon);
 
             convertView.setTag(holder);
 
@@ -96,7 +98,9 @@ public class ListViewAdapter extends ArrayAdapter<RowItem> {
 
             holder = (ViewHolder) convertView.getTag();
 
-            holder.imageView.setImageResource(rowItem.getImageId());
+            if (rowItem != null) {
+                holder.imageView.setImageResource(rowItem.getImageId());
+            }
         }
 
         HashMap<String, String> map=list.get(position);
@@ -119,16 +123,6 @@ public class ListViewAdapter extends ArrayAdapter<RowItem> {
     public boolean isEnabled(int position) {
 
         // this is to implement 1.2A till 1.2C user should not be able to click on a schedule ahead from the current week
-        boolean clearScheduleIsCalled = ListCalendar.scheduleIsCleared;
-
-        if (clearScheduleIsCalled) {
-
-            return false;
-        }
-
-        else {
-
-            return true;
-        }
+        return true;
     }
 }
